@@ -779,7 +779,6 @@ async function main() {
   const resolutionReadout = document.getElementById('resolution-readout');
   const fovReadout = document.getElementById('fov-readout');
   const chatInput = document.getElementById('chat-input');
-  const mainMenu = document.getElementById('main-menu');
 
   // Unified keydown listener for menus and chat
   document.addEventListener('keydown', (e) => {
