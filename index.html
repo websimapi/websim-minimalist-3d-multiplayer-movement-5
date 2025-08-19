@@ -1,0 +1,141 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Minimalist 3D Multiplayer Movement</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.10.1/dist/nipplejs.min.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="game-container">
+    <div id="online-users" class="online-users">
+      <div id="online-count">Online: 1</div>
+      <ul id="online-list"></ul>
+    </div>
+    <div class="crosshair"></div>
+  </div>
+  <!-- Chat UI -->
+  <div id="chat" class="chat">
+    <div id="chat-messages" class="chat-messages"></div>
+    <div id="typing-indicator" class="typing-indicator" aria-live="polite"></div>
+    <input id="chat-input" class="chat-input" type="text" placeholder="Type a message..." />
+  </div>
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display:none;">
+    <div class="loading-box">
+      <div id="loading-text">Loading assets... 0%</div>
+    </div>
+  </div>
+  <!-- Main Menu -->
+  <div id="main-menu" class="menu">
+    <div id="menu-background-light"></div>
+    <div class="title-container">
+      <h2>Backrooms: Funrooms</h2>
+      <img src="/trollface (2).png" alt="Trollface" class="title-trollface">
+    </div>
+    <p class="menu-note">If the game is freezed just wait, recommended to play in fullscreen and PC</p>
+    <div id="menu-online" style="margin-bottom:12px; font-size:14px; opacity:0.9;">Online: —</div>
+    <button id="singleplayer-btn">Singleplayer</button>
+    <button id="multiplayer-btn">Multiplayer</button>
+    <button id="demo-story-btn">Demo Story</button>
+    <div class="keybinds-info">
+      <p>WASD: Move</p>
+      <p>Tab: Menu</p>
+      <p>Space: Jump</p>
+      <p>Enter: Chat</p>
+      <p>Shift: Sprint</p>
+      <p>E: Interact</p>
+      <p>Ctrl: Crouch</p>
+      <p>P: Respawn</p>
+      <p>M: Map</p>
+    </div>
+  </div>
+  <div id="escape-menu" class="menu" style="display: none;">
+    <h2>Menu</h2>
+    <button id="reset-button">Back to Main Menu</button>
+    <button id="settings-button">Settings</button>
+    <button id="close-menu-button">Resume</button>
+  </div>
+  <div id="settings-menu" class="menu" style="display: none;">
+    <h2>Settings</h2>
+    <div class="setting-item">
+      <label for="bg-volume-slider">Background Volume</label>
+      <input type="range" id="bg-volume-slider" min="0" max="1" step="0.01" value="0.03">
+      <label for="walk-volume-slider" style="margin-top:8px; display:block;">Walking Volume</label>
+      <input type="range" id="walk-volume-slider" min="0" max="1" step="0.01" value="0.5">
+      <label for="master-volume-slider" style="margin-top:8px; display:block;">Main Volume</label>
+      <input type="range" id="master-volume-slider" min="0" max="1" step="0.01" value="1">
+    </div>
+    <div class="setting-item">
+      <label for="fov-slider">FOV (<span id="fov-readout">75</span>)</label>
+      <input type="range" id="fov-slider" min="50" max="110" step="1" value="75">
+    </div>
+    <div class="setting-item">
+      <label for="resolution-slider">Resolution Scale (<span id="resolution-readout">100%</span>)</label>
+      <input type="range" id="resolution-slider" min="0.5" max="1" step="0.05" value="1">
+    </div>
+    <div class="setting-item">
+      <label>Graphics</label>
+      <div class="options">
+        <button class="graphics-option" data-quality="low">Low</button>
+        <button class="graphics-option" data-quality="medium">Medium</button>
+        <button class="graphics-option" data-quality="high">High</button>
+        <button class="graphics-option" data-quality="ultra">Ultra</button>
+      </div>
+    </div>
+    <div class="setting-item">
+      <label for="fps-slider">FPS Limit</label>
+      <input type="range" id="fps-slider" min="30" max="240" step="5" value="60">
+      <div id="fps-readout" style="margin-top:6px; font-size:12px; opacity:0.9;">FPS: 60</div>
+    </div>
+    <button id="back-button">Back</button>
+  </div>
+  <div id="fps-counter" class="fps-counter" aria-live="polite"></div>
+  <div id="stamina" class="stamina"><div class="label">Stamina: 100%</div><div class="bar"><span style="width:100%"></span></div></div>
+  <div id="minimap-container" class="minimap-container">
+    <canvas id="minimap-canvas"></canvas>
+  </div>
+  <div id="full-map-container" class="full-map-container" style="display:none;">
+    <canvas id="full-map-canvas"></canvas>
+    <div class="map-key">
+      <h3>Legend</h3>
+      <div class="map-key-item">
+        <div class="map-key-color" style="background-color: #ffffff; border-radius: 50%;"></div>
+        <span>You</span>
+      </div>
+      <div class="map-key-item">
+        <div class="map-key-color" style="background-color: #f9a825; border-radius: 50%;"></div>
+        <span>Other Players</span>
+      </div>
+      <div class="map-key-item">
+        <div class="map-key-color" style="background-color: #555;"></div>
+        <span>Explored Path</span>
+      </div>
+      <div class="map-key-item">
+        <div class="map-key-color" style="background-color: #333;"></div>
+        <span>Wall</span>
+      </div>
+    </div>
+    <div class="map-keybind-info">Press 'M' to close</div>
+  </div>
+  <!-- Mobile UI elements -->
+  <div id="joystick-container" style="display:none;"></div>
+  <div id="jump-button" style="display:none;">JUMP</div>
+  <div id="interact-button" style="display:none;">E</div>
+  <!-- End screen overlay -->
+  <div id="end-screen" style="display:none; position:fixed; inset:0; background:white; color:black; font-size:48px; font-family:'Press Start 2P', monospace; z-index:4000; align-items:center; justify-content:center; flex-direction: column; text-align:center; padding:20px;">
+    <div id="end-text"></div>
+  </div>
+  <script src="app.js" type="module"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

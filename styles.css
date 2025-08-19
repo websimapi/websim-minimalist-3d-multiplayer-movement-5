@@ -1,0 +1,432 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Noto Sans", Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  touch-action: manipulation;
+  -webkit-touch-callout: none; /* iOS Safari */
+  background-color: #000;
+}
+
+#game-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.online-users {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.35);
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #fff;
+  z-index: 10;
+  max-height: 250px;
+  overflow-y: auto;
+  min-width: 150px;
+}
+
+#online-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 0;
+  font-size: 12px;
+}
+
+#online-list li {
+  padding: 2px 0;
+  opacity: 0.9;
+}
+
+.instructions {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 8px;
+  font-size: 18px;
+  color: #fff;
+  z-index: 100;
+  max-width: 400px;
+  text-align: center;
+}
+
+.crosshair {
+  /* Minimal crosshair but less intrusive in eerie environment */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 20px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.crosshair::before,
+.crosshair::after {
+  content: "";
+  position: absolute;
+  background-color: white;
+}
+
+.crosshair::before {
+  top: 9px;
+  left: 0;
+  width: 20px;
+  height: 2px;
+}
+
+.crosshair::after {
+  top: 0;
+  left: 9px;
+  width: 2px;
+  height: 20px;
+}
+
+#game-container canvas, #game-container canvas:focus {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none;
+  outline: none;
+}
+
+#joystick-container {
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  width: 120px;
+  height: 120px;
+  z-index: 1000;
+  touch-action: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+#jump-button {
+  position: fixed;
+  bottom: 40px;
+  right: 25px;
+  width: 80px;
+  height: 80px;
+  background-color: rgba(255,255,255,0.65);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  border-radius: 50%;
+  z-index: 1000;
+  touch-action: none;
+  text-align: center;
+  line-height: 80px;
+  font-weight: bold;
+  color: #333;
+  user-select: none;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+}
+
+#interact-button {
+  position: fixed;
+  bottom: 135px;
+  right: 25px;
+  width: 80px;
+  height: 50px;
+  background-color: rgba(90, 200, 250, 0.7);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  border-radius: 12px;
+  z-index: 1000;
+  touch-action: none;
+  text-align: center;
+  line-height: 50px;
+  font-weight: bold;
+  color: #fff;
+  user-select: none;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 18px;
+}
+
+#open-prompt {
+  pointer-events: none;
+}
+
+.chat {
+  position: fixed; left: 16px; bottom: 16px; width: 320px; z-index: 1500;
+  font-family: "Noto Sans", Arial, sans-serif; pointer-events: none;
+}
+.chat-messages { max-height: 180px; overflow: hidden; display: flex; flex-direction: column-reverse; gap: 6px; }
+.chat-msg { background: rgba(0,0,0,0.55); color:#fff; padding:6px 10px; border-radius:8px; font-size:13px; opacity:1; transition: opacity 0.5s; }
+.chat-msg.fade { opacity: 0; }
+.chat-input { width:100%; margin-top:8px; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.6); color:#fff; display:none; pointer-events: auto; }
+.loading-overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.7); z-index:3000; }
+.loading-box { background: rgba(20,20,20,0.85); padding:18px 22px; border-radius:10px; color:#fff; border:1px solid rgba(255,255,255,0.1); }
+
+.typing-indicator {
+  margin-top: 6px;
+  color: #ddd;
+  font-size: 12px;
+  min-height: 14px;
+}
+
+.fps-counter {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  z-index: 12;
+}
+
+.menu {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(5px);
+  padding: 25px;
+  border-radius: 12px;
+  color: #fff;
+  z-index: 2000;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden; /* For background effect */
+}
+
+.menu .title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.menu .title-trollface {
+  width: 32px;
+  height: 32px;
+}
+
+.menu h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.menu button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.menu button:hover {
+  background-color: rgba(255, 255, 255, 0.24);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+.menu button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.menu button:last-child {
+  margin-bottom: 0;
+}
+
+#main-menu.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#settings-menu .setting-item {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+#settings-menu label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#settings-menu input[type="range"] {
+  width: 100%;
+  cursor: pointer;
+}
+
+#settings-menu .options {
+  display: flex;
+  justify-content: space-between;
+}
+
+#settings-menu .options button {
+  width: calc(25% - 8px);
+  padding: 8px;
+  font-size: 12px;
+  margin-bottom: 0;
+}
+
+#settings-menu .options button.active {
+  background-color: #4CAF50;
+  font-weight: bold;
+}
+
+.menu-note {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #ddd;
+  opacity: 0.9;
+  margin: -6px 0 8px 0;
+}
+
+.keybinds-info {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 10px;
+  color: #ccc;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 15px;
+  font-family: 'Press Start 2P', monospace;
+}
+
+.keybinds-info p {
+  margin: 0;
+}
+
+#menu-background-light {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%);
+  pointer-events: none;
+  z-index: -1;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+
+#main-menu:hover #menu-background-light {
+  opacity: 1;
+}
+
+.stamina { position: fixed; top: 54px; left: 20px; z-index: 13; color:#fff; width: 220px; display: none; }
+.stamina .label { font-family: 'Press Start 2P', monospace; font-size: 10px; margin-bottom: 6px; opacity: 0.9; }
+.stamina .bar { width: 100%; height: 10px; background: rgba(255,255,255,0.18); border-radius: 6px; overflow: hidden; }
+.stamina .bar span { display:block; height:100%; background:#4CAF50; transition: width 0.15s ease; }
+
+.minimap-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 200px;
+  height: 200px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 100;
+  display: none; /* Initially hidden */
+}
+
+#minimap-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.full-map-container {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1900; /* Below menu but above game */
+}
+
+#full-map-canvas {
+  max-width: 90vh;
+  max-height: 90vh;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.map-keybind-info {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ccc;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+}
+
+.map-key {
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  pointer-events: none;
+}
+.map-key h3 {
+  margin-top: 0;
+  font-size: 14px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #555;
+  padding-bottom: 5px;
+}
+.map-key-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.map-key-item:last-child {
+  margin-bottom: 0;
+}
+.map-key-color {
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  border: 1px solid #888;
+}
