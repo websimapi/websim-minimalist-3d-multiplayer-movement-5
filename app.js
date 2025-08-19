@@ -1365,7 +1365,7 @@ async function main() {
           promptEl.style.display = 'none';
           if(isMobile) {
             const interactBtn = document.getElementById('interact-button');
-            if(interactBtn) interactBtn.style.display = 'none';
+            if(interactBtn && !playerControls.nearDoor) interactBtn.style.display = 'none';
           }
 
           const endScreen = document.getElementById('end-screen');
